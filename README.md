@@ -74,8 +74,8 @@ BOTInsta/
 
 ### 2. Clonar o Repositório
 ```bash
-git clone https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git
-cd NOME_DO_REPOSITORIO
+git clone https://github.com/NuncaMorto/Lulatron.git
+cd Lulatron
 ```
 
 ---
