@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  socialbot:
+    build: .
+    container_name: socialbot_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      # Volumes persistentes para que uploads, banco SQLite e sessões não sejam perdidos
+      - ./uploads:/app/uploads
+      - ./sessions:/app/sessions
+      - ./jobs.sqlite:/app/jobs.sqlite
+      - ./posts_history.json:/app/posts_history.json

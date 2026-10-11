@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Lulatron</title>
+    <!-- Favicon Oficial: Crânio dos Piratas do Chapéu de Palha -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="shortcut icon" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            padding: 20px;
+            position: relative;
+        }
+        .login-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 430px;
+            padding: 38px 34px;
+            box-shadow: var(--shadow-card);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-header .logo-icon {
+            margin: 0 auto 16px auto;
+            width: 54px;
+            height: 54px;
+            padding: 4px;
+        }
+        .login-header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.4px;
+        }
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-top: 6px;
+        }
+        .login-header .badge-tag {
+            display: inline-block;
+            margin-top: 8px;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+        .alert-error {
+            background: var(--danger-bg);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .security-badge {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="logo-icon">
+                <img src="/static/favicon.svg" alt="Lulatron" style="width: 44px; height: 44px;">
+            </div>
+            <h2>Lulatron</h2>
+            <p>Painel de Automação Multi-Redes</p>
+            <span class="badge-tag"><i class="fa-solid fa-flag"></i> Mobilização Digital 13</span>
+        </div>
+
+        {% if error %}
+        <div class="alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label class="form-label" for="username">Usuário Administrador</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Digite seu usuário" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Senha de Acesso</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
+            </div>
+
+            <button type="submit" class="btn-primary" style="margin-top: 10px;">
+                <i class="fa-solid fa-lock"></i> Entrar no Lulatron
+            </button>
+        </form>
+
+        <div class="security-badge">
+            <i class="fa-solid fa-shield-halved"></i> Sessão protegida contra ataques de força bruta
+        </div>
+    </div>
+</body>
+</html>

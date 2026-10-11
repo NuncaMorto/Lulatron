@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Fundo Circular Transparente / Escuro Suave para Destaque na Aba -->
+  <circle cx="50" cy="50" r="48" fill="#111827"/>
+  
+  <!-- Ossos Cruzados (Crossbones) -->
+  <g stroke="#ffffff" stroke-width="7" stroke-linecap="round">
+    <line x1="20" y1="20" x2="80" y2="80"/>
+    <line x1="80" y1="20" x2="20" y2="80"/>
+  </g>
+  <!-- Pontas dos Ossos -->
+  <g fill="#ffffff">
+    <circle cx="18" cy="18" r="4"/>
+    <circle cx="23" cy="15" r="4"/>
+    <circle cx="15" cy="23" r="4"/>
+
+    <circle cx="82" cy="18" r="4"/>
+    <circle cx="77" cy="15" r="4"/>
+    <circle cx="85" cy="23" r="4"/>
+
+    <circle cx="18" cy="82" r="4"/>
+    <circle cx="23" cy="85" r="4"/>
+    <circle cx="15" cy="77" r="4"/>
+
+    <circle cx="82" cy="82" r="4"/>
+    <circle cx="77" cy="85" r="4"/>
+    <circle cx="85" cy="77" r="4"/>
+  </g>
+
+  <!-- Crânio (Skull Base) -->
+  <ellipse cx="50" cy="56" rx="22" ry="21" fill="#ffffff"/>
+  <!-- Mandíbula e Dentes -->
+  <rect x="38" y="70" width="24" height="13" rx="3" fill="#ffffff"/>
+  <!-- Dentes (Linhas verticais pretas) -->
+  <line x1="44" y1="71" x2="44" y2="83" stroke="#111827" stroke-width="2"/>
+  <line x1="50" y1="71" x2="50" y2="83" stroke="#111827" stroke-width="2"/>
+  <line x1="56" y1="71" x2="56" y2="83" stroke="#111827" stroke-width="2"/>
+  <line x1="38" y1="77" x2="62" y2="77" stroke="#111827" stroke-width="1.5"/>
+
+  <!-- Olhos do Crânio (Grandes e pretos, estilo anime) -->
+  <circle cx="41" cy="55" r="6.5" fill="#111827"/>
+  <circle cx="59" cy="55" r="6.5" fill="#111827"/>
+  <!-- Nariz (Triângulo invertido) -->
+  <polygon points="50,64 47,69 53,69" fill="#111827"/>
+
+  <!-- Chapéu de Palha do Luffy (Straw Hat) -->
+  <!-- Copa do Chapéu (Amarela) -->
+  <path d="M 30,42 Q 50,15 70,42 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+  <!-- Fita Vermelha do Chapéu -->
+  <path d="M 30,40 Q 50,33 70,40 L 71,44 Q 50,37 29,44 Z" fill="#dc2626"/>
+  <!-- Aba do Chapéu (Curvada) -->
+  <ellipse cx="50" cy="43" rx="35" ry="6.5" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+</svg>

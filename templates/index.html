@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lulatron - Automação Multi-Plataforma</title>
+    <!-- Favicon Oficial: Crânio dos Piratas do Chapéu de Palha (One Piece Jolly Roger) -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="shortcut icon" href="/static/favicon.svg">
+    <!-- Cache buster ?v=6 -->
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar / Menu de Navegação -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon" style="padding: 2px;">
+                    <img src="/static/favicon.svg" alt="Lulatron Skull" style="width: 34px; height: 34px;">
+                </div>
+                <div class="brand-text">
+                    <h2>Lulatron</h2>
+                    <span class="badge">Multi-Redes 13</span>
+                </div>
+            </div>
+
+            <!-- Alternador de Tema Único e Exclusivo (Na Barra Lateral Esquerda) -->
+            <div class="theme-switcher-box">
+                <span class="theme-box-title"><i class="fa-solid fa-circle-half-stroke"></i> Tema Visual:</span>
+                <div class="theme-switch-segment">
+                    <button type="button" class="theme-btn-seg active" id="btnThemeLight">
+                        <i class="fa-solid fa-sun"></i> Claro
+                    </button>
+                    <button type="button" class="theme-btn-seg" id="btnThemeDark">
+                        <i class="fa-solid fa-moon"></i> Escuro
+                    </button>
+                </div>
+            </div>
+
+            <!-- Monitor de Status das 4 Redes -->
+            <div class="platforms-monitor-card">
+                <h4><i class="fa-solid fa-signal"></i> Redes Conectadas</h4>
+                <div class="platform-status-row">
+                    <span><i class="fa-brands fa-instagram icon-ig"></i> Instagram</span>
+                    <span class="status-pill checking" id="statusIG">Checando...</span>
+                </div>
+                <div class="platform-status-row">
+                    <span><i class="fa-brands fa-tiktok icon-tt"></i> TikTok</span>
+                    <span class="status-pill checking" id="statusTT">Checando...</span>
+                </div>
+                <div class="platform-status-row">
+                    <span><i class="fa-brands fa-facebook icon-fb"></i> Facebook</span>
+                    <span class="status-pill checking" id="statusFB">Checando...</span>
+                </div>
+                <div class="platform-status-row">
+                    <span><i class="fa-solid fa-play icon-kw"></i> Kwai</span>
+                    <span class="status-pill checking" id="statusKW">Checando...</span>
+                </div>
+            </div>
+
+            <!-- Menu com Navegação por Abas -->
+            <nav class="nav-menu">
+                <button type="button" class="nav-item active" data-view="viewForm">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Novo Agendamento
+                </button>
+                <button type="button" class="nav-item" data-view="viewExtractor">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Extrair Mídia
+                    <span class="badge-count" id="extractorBadgeCount" style="display: none;">0</span>
+                </button>
+                <button type="button" class="nav-item" data-view="viewJobs">
+                    <i class="fa-solid fa-clock"></i> Tarefas Ativas
+                    <span class="badge-count" id="jobsBadgeCount" style="display: none;">0</span>
+                </button>
+                <button type="button" class="nav-item" data-view="viewHistory">
+                    <i class="fa-solid fa-list-check"></i> Histórico de Envios
+                </button>
+                <button type="button" class="nav-item" data-view="viewAccounts">
+                    <i class="fa-solid fa-users-gear"></i> Gerador de Contas
+                    <span class="badge-count" id="accountsBadgeCount" style="display: none;">0</span>
+                </button>
+                <button type="button" class="nav-item" data-view="viewConnections">
+                    <i class="fa-solid fa-plug-circle-bolt"></i> Conectar Contas
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info-row">
+                    <span><i class="fa-solid fa-user-shield"></i> {{ user or 'admin' }}</span>
+                    <a href="/logout" class="btn-logout" title="Sair do painel"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</a>
+                </div>
+                <small><i class="fa-solid fa-shield-halved"></i> Autenticação Ativa • Rate Limit</small>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-title-area">
+                    <h1 id="pageTitle">Novo Agendamento</h1>
+                    <span class="campanha-pill"><i class="fa-solid fa-flag"></i> Brasil da Esperança</span>
+                </div>
+                <div class="top-actions">
+                    <!-- Mantido apenas o botão de Checar Redes, removido o alternador da direita conforme solicitado -->
+                    <button class="btn-secondary" id="btnRefreshHealth" title="Recarregar status das redes">
+                        <i class="fa-solid fa-arrows-rotate"></i> Checar Redes
+                    </button>
+                </div>
+            </header>
+
+            <!-- TELA 1: Formulário de Novo Agendamento -->
+            <div class="view-screen active" id="viewForm">
+                <div class="view-grid-single">
+                    <section class="card form-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-film"></i> Publicar Vídeo Multi-Plataforma</h2>
+                            <p class="subtitle">Envie seu vídeo e selecione as redes: Instagram, TikTok, Facebook e Kwai.</p>
+                        </div>
+
+                        <form id="scheduleForm">
+                            <input type="hidden" id="existingMediaFilename" name="existing_media_filename" value="">
+                            <!-- Dropzone de Upload -->
+                            <div class="form-group">
+                                <label class="form-label">Arquivo de Mídia (.mp4, .mov ou imagem)</label>
+                                <div class="upload-dropzone" id="dropzone">
+                                    <input type="file" id="videoInput" name="video" accept="video/mp4,video/quicktime,video/*,image/*">
+                                    <div class="dropzone-content" id="dropzonePlaceholder">
+                                        <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                        <p class="upload-title">Arraste seu vídeo aqui ou <span>clique para selecionar</span></p>
+                                        <p class="upload-hint">Vídeos verticais 9:16 (.mp4) ou mídias extraídas do Twitter/Instagram</p>
+                                    </div>
+                                    <div class="video-preview-wrapper" id="videoPreviewWrapper" style="display: none;">
+                                        <video id="videoPreview" controls style="display: none;"></video>
+                                        <img id="imagePreview" alt="Pré-visualização da imagem" style="display: none; max-height: 380px; width: auto; max-width: 100%; border-radius: 8px; margin: 0 auto; object-fit: contain;">
+                                        <button type="button" class="btn-remove-video" id="btnRemoveVideo" title="Remover mídia">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seleção Multi-Plataforma -->
+                            <div class="form-group">
+                                <div class="platforms-header-row">
+                                    <label class="form-label">Onde publicar? (Selecione uma ou mais)</label>
+                                    <button type="button" class="btn-text-link" id="btnSelectAllPlatforms">Selecionar Todas</button>
+                                </div>
+                                <div class="platforms-selector-grid">
+                                    <label class="checkbox-card active">
+                                        <input type="checkbox" name="platforms" value="instagram_reels" checked>
+                                        <div class="checkbox-card-inner">
+                                            <i class="fa-brands fa-instagram brand-ig"></i>
+                                            <div>
+                                                <strong>Instagram Reels</strong>
+                                                <small>Feed & Reels</small>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" name="platforms" value="instagram_story">
+                                        <div class="checkbox-card-inner">
+                                            <i class="fa-brands fa-instagram brand-ig-story"></i>
+                                            <div>
+                                                <strong>Instagram Story</strong>
+                                                <small>Stories (24h)</small>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <label class="checkbox-card active">
+                                        <input type="checkbox" name="platforms" value="tiktok" checked>
+                                        <div class="checkbox-card-inner">
+                                            <i class="fa-brands fa-tiktok brand-tt"></i>
+                                            <div>
+                                                <strong>TikTok</strong>
+                                                <small>Feed TikTok</small>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <label class="checkbox-card active">
+                                        <input type="checkbox" name="platforms" value="facebook" checked>
+                                        <div class="checkbox-card-inner">
+                                            <i class="fa-brands fa-facebook brand-fb"></i>
+                                            <div>
+                                                <strong>Facebook</strong>
+                                                <small>Página / Reels</small>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <label class="checkbox-card active">
+                                        <input type="checkbox" name="platforms" value="kwai" checked>
+                                        <div class="checkbox-card-inner">
+                                            <i class="fa-solid fa-play brand-kw"></i>
+                                            <div>
+                                                <strong>Kwai</strong>
+                                                <small>Vídeo Kwai</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Legenda do Post (Com altura mínima protegida contra corte de linha) -->
+                            <div class="form-group" id="captionGroup">
+                                <label class="form-label" for="caption">Legenda / Mensagem da Publicação</label>
+                                <textarea id="caption" name="caption" rows="3" placeholder="Escreva a legenda com hashtags (#), menções e links..."></textarea>
+                                <div class="char-count"><span id="charCount">0</span> caracteres</div>
+                            </div>
+
+                            <!-- Modo de Agendamento -->
+                            <div class="form-group">
+                                <label class="form-label">Programação do Envio</label>
+                                <div class="schedule-tabs">
+                                    <button type="button" class="tab-btn active" data-mode="now">
+                                        <i class="fa-solid fa-bolt"></i> Postar Agora
+                                    </button>
+                                    <button type="button" class="tab-btn" data-mode="once">
+                                        <i class="fa-solid fa-calendar-day"></i> Horário Específico
+                                    </button>
+                                    <button type="button" class="tab-btn" data-mode="daily">
+                                        <i class="fa-solid fa-repeat"></i> Várias Vezes ao Dia
+                                    </button>
+                                </div>
+
+                                <input type="hidden" name="schedule_mode" id="scheduleMode" value="now">
+
+                                <div class="schedule-inputs" id="scheduleOnceInputs" style="display: none;">
+                                    <label for="scheduleDatetime" class="sub-label">Escolha Data e Hora:</label>
+                                    <input type="datetime-local" id="scheduleDatetime" name="schedule_datetime" class="form-control">
+                                </div>
+
+                                <div class="schedule-inputs" id="scheduleDailyInputs" style="display: none;">
+                                    <label for="dailyTimes" class="sub-label">Horários Diários (separados por vírgula):</label>
+                                    <input type="text" id="dailyTimes" name="daily_times" class="form-control" placeholder="ex: 09:00, 13:13, 19:30">
+                                    <small class="input-hint">O bot publicará automaticamente todos os dias nesses horários em todas as redes selecionadas.</small>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary" id="btnSubmit">
+                                <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> Confirmar e Agendar Publicação</span>
+                                <span class="btn-spinner" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Agendando...</span>
+                            </button>
+                        </form>
+                    </section>
+                </div>
+            </div>
+
+            <!-- TELA: Extrator de Mídias (Twitter / X & Instagram) -->
+            <div class="view-screen" id="viewExtractor" style="display: none;">
+                <div class="view-grid-single" style="max-width: 1050px;">
+                    <section class="card form-card">
+                        <div class="card-header flex-header">
+                            <div>
+                                <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Extrator de Mídia • Twitter (X) & Instagram</h2>
+                                <p class="subtitle">Cole o link de qualquer vídeo, Reels ou imagem para extrair em alta resolução, baixar ou lançar para postagem.</p>
+                            </div>
+                            <div class="extractor-supported-pills">
+                                <span class="badge-brand badge-x"><i class="fa-brands fa-x-twitter"></i> Twitter / X</span>
+                                <span class="badge-brand badge-ig"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Inserção da URL -->
+                        <div class="extractor-input-box">
+                            <label class="form-label" style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; display: block;">
+                                Cole o link da publicação (Twitter / X ou Instagram):
+                            </label>
+                            <div class="extractor-input-group">
+                                <div class="extractor-input-wrapper">
+                                    <i class="fa-solid fa-link extractor-input-icon"></i>
+                                    <input type="url" id="extractorUrlInput" class="form-control" placeholder="Cole aqui o link do vídeo, Reels ou imagem (ex: https://x.com/... ou https://instagram.com/reel/...)" autocomplete="off">
+                                    <div class="extractor-input-buttons">
+                                        <button type="button" class="btn-input-clear" id="btnClearExtractorUrl" title="Limpar link" style="display: none;">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                        </button>
+                                        <button type="button" class="btn-input-paste" id="btnPasteExtractorUrl" title="Colar da área de transferência">
+                                            <i class="fa-solid fa-paste"></i> Colar
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-primary btn-extract" id="btnRunExtractor">
+                                    <span class="btn-extract-text"><i class="fa-solid fa-bolt"></i> Extrair Mídia</span>
+                                    <span class="btn-extract-spinner" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Extraindo...</span>
+                                </button>
+                            </div>
+                            <small class="helper-text" style="margin-top: 10px; font-size: 0.8rem;">
+                                <i class="fa-solid fa-circle-info"></i> Suporta Reels, Posts do Feed, Vídeos e Fotos do Instagram e Vídeos e Imagens do Twitter (X).
+                            </small>
+                        </div>
+
+                        <!-- Card de Mídia Extraída (Exibido Dinamicamente) -->
+                        <div class="extractor-result-container" id="extractorResultContainer" style="display: none;">
+                            <div class="extractor-result-card">
+                                <div class="extractor-result-header">
+                                    <div class="extractor-header-left">
+                                        <span class="extractor-platform-badge" id="extractedPlatformBadge"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                                        <span class="extractor-type-badge" id="extractedTypeBadge"><i class="fa-solid fa-video"></i> Vídeo MP4</span>
+                                    </div>
+                                    <div class="extractor-header-right">
+                                        <span class="extractor-filesize" id="extractedFilesize"><i class="fa-solid fa-hard-drive"></i> 0 MB</span>
+                                        <span class="extractor-duration" id="extractedDuration" style="display: none;"><i class="fa-solid fa-stopwatch"></i> 0s</span>
+                                    </div>
+                                </div>
+
+                                <div class="extractor-result-content">
+                                    <!-- Preview Player / Imagem -->
+                                    <div class="extractor-preview-col">
+                                        <div class="extractor-media-frame">
+                                            <video id="extractedVideoPlayer" controls playsinline style="display: none;"></video>
+                                            <img id="extractedImagePreview" alt="Imagem extraída" style="display: none;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Detalhes e Ações -->
+                                    <div class="extractor-details-col">
+                                        <div class="extractor-author-row" id="extractedAuthorRow">
+                                            <i class="fa-solid fa-user-circle"></i>
+                                            <strong id="extractedAuthorName">Autor Desconhecido</strong>
+                                        </div>
+
+                                        <div class="extractor-caption-box">
+                                            <div class="extractor-caption-header">
+                                                <span><i class="fa-solid fa-quote-left"></i> Legenda Original:</span>
+                                                <button type="button" class="btn-copy-tiny" id="btnCopyExtractedCaption" title="Copiar legenda">
+                                                    <i class="fa-solid fa-copy"></i> Copiar
+                                                </button>
+                                            </div>
+                                            <p class="extractor-caption-text" id="extractedCaptionText">(Sem texto)</p>
+                                        </div>
+
+                                        <!-- BOTÕES DE AÇÃO PRINCIPAIS -->
+                                        <div class="extractor-actions-grid">
+                                            <button type="button" class="btn-primary btn-action-post" id="btnSendToPosting">
+                                                <i class="fa-solid fa-paper-plane"></i> Lançar para a Aba de Postagem
+                                            </button>
+                                            <a href="#" class="btn-secondary btn-action-download" id="btnDownloadExtracted" download>
+                                                <i class="fa-solid fa-download"></i> Baixar no Dispositivo
+                                            </a>
+                                            <button type="button" class="btn-action-convert" id="btnConvertImageToVideo" style="display: none;">
+                                                <i class="fa-solid fa-film"></i> Converter Foto em Vídeo 9:16 (5s)
+                                            </button>
+                                        </div>
+
+                                        <div class="extractor-success-note">
+                                            <i class="fa-solid fa-circle-check"></i> Ao clicar em <strong>"Lançar para a Aba de Postagem"</strong>, a mídia e a legenda são pré-carregadas automaticamente para envio instantâneo nas suas redes conectadas!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Histórico de Mídias Extraídas -->
+                        <div class="extractor-history-section">
+                            <div class="extractor-history-header">
+                                <h3><i class="fa-solid fa-clock-rotate-left"></i> Mídias Extraídas Recentemente</h3>
+                                <button type="button" class="btn-secondary-tiny" id="btnRefreshExtractorHistory">
+                                    <i class="fa-solid fa-arrows-rotate"></i> Atualizar
+                                </button>
+                            </div>
+                            <div class="extractor-history-grid" id="extractorHistoryGrid">
+                                <div class="empty-state">Carregando histórico de mídias...</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- TELA 2: Fila de Tarefas Ativas -->
+            <div class="view-screen" id="viewJobs" style="display: none;">
+                <section class="card full-view-card">
+                    <div class="card-header flex-header">
+                        <div>
+                            <h2><i class="fa-solid fa-clock-rotate-left"></i> Fila de Postagens Agendadas</h2>
+                            <p class="subtitle">Tarefas ativas programadas no APScheduler</p>
+                        </div>
+                        <button class="btn-secondary" id="btnRefreshJobs">
+                            <i class="fa-solid fa-arrows-rotate"></i> Atualizar Fila
+                        </button>
+                    </div>
+                    <div class="job-list-full" id="jobsContainer">
+                        <div class="empty-state">Carregando agendamentos...</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TELA 3: Histórico de Envios -->
+            <div class="view-screen" id="viewHistory" style="display: none;">
+                <section class="card full-view-card">
+                    <div class="card-header flex-header">
+                        <div>
+                            <h2><i class="fa-solid fa-list-check"></i> Histórico de Publicações Realizadas</h2>
+                            <p class="subtitle">Status detalhado de cada rede social para cada publicação</p>
+                        </div>
+                        <button class="btn-secondary" id="btnRefreshHistory">
+                            <i class="fa-solid fa-arrows-rotate"></i> Atualizar Histórico
+                        </button>
+                    </div>
+                    <div class="history-list-full" id="historyContainer">
+                        <div class="empty-state">Carregando histórico...</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TELA 4: Gerador de Contas & Cofre de Credenciais -->
+            <div class="view-screen" id="viewAccounts" style="display: none;">
+                <div class="accounts-vault-layout">
+                    <section class="card generator-box-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Gerador de Contas & E-mails Temporários</h2>
+                            <p class="subtitle">Gera e-mails compatíveis com leitura de código OTP (6 dígitos) para Instagram, TikTok, Facebook e Kwai.</p>
+                        </div>
+
+                        <form id="generatorForm" class="generator-inline-form">
+                            <div class="form-group-compact">
+                                <label class="sub-label">Qtd. de Contas:</label>
+                                <input type="number" id="genQty" class="form-control" value="5" min="1" max="50" required>
+                            </div>
+
+                            <div class="form-group-compact">
+                                <label class="sub-label">Prefixo do Usuário:</label>
+                                <input type="text" id="genPrefix" class="form-control" value="lulatron" placeholder="ex: lula, canal13" required>
+                            </div>
+
+                            <div class="form-group-compact" style="flex: 2; min-width: 280px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label class="sub-label" style="margin-bottom: 0;">Domínio (Anti-Bloqueio):</label>
+                                    <button type="button" class="btn-link-action" id="btnRefreshDomains" title="Buscar novos domínios ativos">
+                                        <i class="fa-solid fa-arrows-rotate"></i> Novos Domínios
+                                    </button>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <select id="genDomainSelect" class="form-control" style="flex: 1;">
+                                        <option value="maxxspace.com" selected>maxxspace.com (Mail.tm - Recomendado)</option>
+                                        <option value="makeraura.online">makeraura.online (Generator)</option>
+                                        <option value="gmailedu.us">gmailedu.us (Generator)</option>
+                                        <option value="bananacompany.us">bananacompany.us (Generator)</option>
+                                        <option value="custom">✏️ Digitar outro domínio...</option>
+                                    </select>
+                                    <input type="text" id="genDomain" class="form-control" value="maxxspace.com" placeholder="ex: maxxspace.com" style="flex: 1; display: none;" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary btn-generate-now" id="btnGenerateAccounts">
+                                <i class="fa-solid fa-bolt"></i> Gerar Credenciais
+                            </button>
+                        </form>
+
+                        <div class="domain-tip-box" style="margin-top: 14px; padding: 10px 14px; border-radius: 8px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); font-size: 0.83rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-shield-halved" style="color: #3b82f6; font-size: 1.1rem;"></i>
+                            <span><strong>Proteção Anti-Bloqueio:</strong> Domínios como <code>maxxspace.com</code> e os domínios do Generator passam na validação do Instagram, TikTok e Facebook sem o erro de <em>"email not supported"</em>.</span>
+                        </div>
+                    </section>
+
+                    <section class="card full-view-card" style="margin-top: 20px;">
+                        <div class="card-header flex-header">
+                            <div>
+                                <h2><i class="fa-solid fa-vault"></i> Cofre de Contas (<span id="totalVaultAccounts">0</span>)</h2>
+                                <p class="subtitle">Clique em "Ler E-mails" em qualquer conta para verificar os códigos de 6 dígitos recebidos.</p>
+                            </div>
+                            <div class="vault-actions-bar">
+                                <button class="btn-action-vault btn-export-txt" id="btnDownloadTxt" title="Baixar arquivo TXT com todas as contas">
+                                    <i class="fa-solid fa-file-lines"></i> Baixar .TXT
+                                </button>
+                                <button class="btn-action-vault btn-export-img" id="btnDownloadImage" title="Gerar e baixar imagem organizada em PNG">
+                                    <i class="fa-solid fa-image"></i> Baixar Imagem
+                                </button>
+                                <button class="btn-action-vault btn-clear-vault" id="btnClearVault" title="Limpar todas as contas">
+                                    <i class="fa-solid fa-trash-can"></i> Limpar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="vault-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Usuário</th>
+                                        <th>E-mail</th>
+                                        <th>Senha</th>
+                                        <th>Caixa de Entrada</th>
+                                        <th>Criado em</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="accountsTableBody">
+                                    <tr>
+                                        <td colspan="7" class="empty-state">Nenhuma conta gerada ainda. Use o formulário acima!</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- TELA 5: Conectar Redes Sociais (.env e Sessões) -->
+            <div class="view-screen" id="viewConnections" style="display: none;">
+                <div class="connections-container">
+                    <div class="connections-intro-banner">
+                        <div>
+                            <h2><i class="fa-solid fa-plug-circle-bolt"></i> Conectar Redes Sociais</h2>
+                            <p>Configure os acessos das suas contas diretamente pelo painel. O Lulatron testa a conexão, salva a sessão e atualiza as credenciais sem precisar alterar arquivos no código.</p>
+                        </div>
+                        <button type="button" class="btn-secondary" id="btnRefreshConnections">
+                            <i class="fa-solid fa-arrows-rotate"></i> Recarregar Status
+                        </button>
+                    </div>
+
+                    <div class="connections-grid">
+                        <!-- Card 1: Instagram -->
+                        <section class="card connection-card">
+                            <div class="card-header flex-header">
+                                <div class="conn-title-group">
+                                    <div class="conn-icon icon-ig"><i class="fa-brands fa-instagram"></i></div>
+                                    <div>
+                                        <h3>Instagram</h3>
+                                        <p class="subtitle">instagrapi • Reels & Stories</p>
+                                    </div>
+                                </div>
+                                <span class="status-pill checking" id="connStatusIG">Checando...</span>
+                            </div>
+
+                            <div class="conn-details-box" id="connDetailsIG" style="display: none;">
+                                <!-- Exibe dados do perfil conectado -->
+                            </div>
+
+                            <form id="formConnIG" class="conn-form">
+                                <div class="form-group-compact">
+                                    <label class="form-label">Usuário do Instagram:</label>
+                                    <div class="input-with-icon">
+                                        <i class="fa-solid fa-at"></i>
+                                        <input type="text" id="connIgUser" class="form-control" placeholder="ex: seu_perfil" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Senha:</label>
+                                    <div class="input-with-action">
+                                        <input type="password" id="connIgPass" class="form-control" placeholder="Digite a senha da conta">
+                                        <button type="button" class="btn-icon-addon" id="btnToggleIgPass" title="Ver senha">
+                                            <i class="fa-regular fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <small class="helper-text" id="connIgPassHint">Deixe em branco para manter a senha já configurada.</small>
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Proxy Residencial (Opcional):</label>
+                                    <input type="text" id="connIgProxy" class="form-control" placeholder="http://usuario:senha@ip:porta">
+                                    <small class="helper-text">Recomendado caso o bot rode em servidores VPS/Datacenter.</small>
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Chave 2FA TOTP Seed (Opcional):</label>
+                                    <input type="text" id="connIgTotp" class="form-control" placeholder="ex: JBSWY3DPEHPK3PXP">
+                                </div>
+
+                                <div class="form-group-compact" id="connIgCodeGroup" style="display: none; background: rgba(245, 158, 11, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                                    <label class="form-label" style="color: var(--warning);"><i class="fa-solid fa-key"></i> Digite o Código 2FA / Desafio recebido:</label>
+                                    <input type="text" id="connIgCode" class="form-control" placeholder="ex: 123456" maxlength="8">
+                                </div>
+
+                                <div class="conn-buttons-row">
+                                    <button type="submit" class="btn-primary" id="btnSaveConnIG">
+                                        <i class="fa-solid fa-plug"></i> Conectar & Salvar
+                                    </button>
+                                    <button type="button" class="btn-danger-outline" id="btnDisconnectIG">
+                                        <i class="fa-solid fa-power-off"></i> Desconectar
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <!-- Card 2: TikTok -->
+                        <section class="card connection-card">
+                            <div class="card-header flex-header">
+                                <div class="conn-title-group">
+                                    <div class="conn-icon icon-tt"><i class="fa-brands fa-tiktok"></i></div>
+                                    <div>
+                                        <h3>TikTok</h3>
+                                        <p class="subtitle">API de Postagem / Session Criador</p>
+                                    </div>
+                                </div>
+                                <span class="status-pill checking" id="connStatusTT">Checando...</span>
+                            </div>
+
+                            <form id="formConnTT" class="conn-form">
+                                <div class="form-group-compact">
+                                    <label class="form-label">Session ID (Cookie do Web Criador):</label>
+                                    <input type="text" id="connTtSession" class="form-control" placeholder="Cookie sessionid do tiktok.com">
+                                    <small class="helper-text">Copie o valor do cookie <code>sessionid</code> logado no navegador.</small>
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">OU Access Token (API Oficial):</label>
+                                    <input type="text" id="connTtToken" class="form-control" placeholder="act.example_token_tiktok">
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Proxy (Opcional):</label>
+                                    <input type="text" id="connTtProxy" class="form-control" placeholder="http://usuario:senha@ip:porta">
+                                </div>
+
+                                <div class="bypass-box" id="bypassBoxTT">
+                                    <div class="bypass-header" onclick="toggleBypass('bypassBodyTT', 'bypassIconTT')">
+                                        <div class="bypass-header-title">
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                            <span>Como burlar "Baixar App" & Facebook</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-down bypass-arrow" id="bypassIconTT"></i>
+                                    </div>
+                                    <div class="bypass-body" id="bypassBodyTT" style="display: none;">
+                                        <p class="bypass-desc">O botão do Facebook falha por bloqueio de popups e o TikTok força o app no navegador. Use estes métodos:</p>
+                                        
+                                        <div class="bypass-step">
+                                            <div class="bypass-step-title"><i class="fa-solid fa-link"></i> 1. Link de Login Direto (E-mail + Senha):</div>
+                                            <a href="https://www.tiktok.com/login/phone-or-email/email" target="_blank" class="bypass-action-btn">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Login Direto E-mail/Senha
+                                            </a>
+                                            <small class="bypass-note">Abre a tela limpa oficial sem depender do Facebook nem do app móvel.</small>
+                                        </div>
+
+                                        <div class="bypass-step">
+                                            <div class="bypass-step-title"><i class="fa-solid fa-ban"></i> 2. Destravar aviso "Baixar o app móvel":</div>
+                                            <button type="button" class="bypass-action-btn-secondary" onclick="copyTikTokBypassScript()">
+                                                <i class="fa-solid fa-copy"></i> Copiar Código Anti-Trava (F12)
+                                            </button>
+                                            <small class="bypass-note">Aperte <code>F12</code> no TikTok > aba <code>Console</code> > Cole e dê Enter. A trava some instantaneamente!</small>
+                                        </div>
+
+                                        <div class="bypass-step">
+                                            <div class="bypass-step-title"><i class="fa-solid fa-cookie-bite"></i> 3. Salvar no Lulatron (Session ID):</div>
+                                            <small class="bypass-note">Logado no TikTok: aperte <code>F12</code> > <code>Application</code> > <code>Cookies</code> > <code>tiktok.com</code> > copie o valor de <code>sessionid</code> e cole no campo acima.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="conn-buttons-row">
+                                    <button type="submit" class="btn-primary" id="btnSaveConnTT">
+                                        <i class="fa-solid fa-floppy-disk"></i> Salvar TikTok
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <!-- Card 3: Facebook -->
+                        <section class="card connection-card">
+                            <div class="card-header flex-header">
+                                <div class="conn-title-group">
+                                    <div class="conn-icon icon-fb"><i class="fa-brands fa-facebook"></i></div>
+                                    <div>
+                                        <h3>Facebook</h3>
+                                        <p class="subtitle">Páginas & Reels • Meta Graph API Oficial</p>
+                                    </div>
+                                </div>
+                                <span class="status-pill checking" id="connStatusFB">Checando...</span>
+                            </div>
+
+                            <form id="formConnFB" class="conn-form">
+                                <div class="form-group-compact">
+                                    <label class="form-label">ID da Página do Facebook (FB_PAGE_ID):</label>
+                                    <input type="text" id="connFbPageId" class="form-control" placeholder="ex: 104829102938472">
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Token de Acesso da Página (Page Access Token):</label>
+                                    <input type="text" id="connFbToken" class="form-control" placeholder="EAA...">
+                                    <small class="helper-text">Token gerado no Meta for Developers com permissões <code>pages_manage_posts</code>.</small>
+                                </div>
+
+                                <div class="conn-buttons-row">
+                                    <button type="submit" class="btn-primary" id="btnSaveConnFB">
+                                        <i class="fa-solid fa-floppy-disk"></i> Salvar Facebook
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <!-- Card 4: Kwai -->
+                        <section class="card connection-card">
+                            <div class="card-header flex-header">
+                                <div class="conn-title-group">
+                                    <div class="conn-icon icon-kw"><i class="fa-solid fa-play"></i></div>
+                                    <div>
+                                        <h3>Kwai</h3>
+                                        <p class="subtitle">Open Platform / Sessão</p>
+                                    </div>
+                                </div>
+                                <span class="status-pill checking" id="connStatusKW">Checando...</span>
+                            </div>
+
+                            <form id="formConnKW" class="conn-form">
+                                <div class="form-group-compact">
+                                    <label class="form-label">Kwai App ID:</label>
+                                    <input type="text" id="connKwAppId" class="form-control" placeholder="ex: kwai_app_12345">
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Access Token / Cookie de Sessão:</label>
+                                    <input type="text" id="connKwToken" class="form-control" placeholder="Token ou cookie do criador">
+                                </div>
+
+                                <div class="form-group-compact">
+                                    <label class="form-label">Proxy (Opcional):</label>
+                                    <input type="text" id="connKwProxy" class="form-control" placeholder="http://usuario:senha@ip:porta">
+                                </div>
+
+                                <div class="bypass-box" id="bypassBoxKW">
+                                    <div class="bypass-header" onclick="toggleBypass('bypassBodyKW', 'bypassIconKW')">
+                                        <div class="bypass-header-title">
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                            <span>Como burlar a trava de Telefone / SMS</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-down bypass-arrow" id="bypassIconKW"></i>
+                                    </div>
+                                    <div class="bypass-body" id="bypassBodyKW" style="display: none;">
+                                        <p class="bypass-desc">O Kwai Web removeu login com e-mail no PC para travar robôs. Use estes 2 métodos para logar sem telefone:</p>
+                                        
+                                        <div class="bypass-step">
+                                            <div class="bypass-step-title"><i class="fa-solid fa-qrcode"></i> 1. Método QR Code (Mais Rápido & Zero SMS):</div>
+                                            <small class="bypass-note">No Kwai Desktop (<code>kwai.com</code>), clique em <strong>Entrar</strong> e escolha a aba <strong>QR Code</strong>. Abra o app no celular ou no emulador Android (onde você entra com Google/E-mail) e aponte a câmera. O PC entra na hora sem pedir SMS!</small>
+                                        </div>
+
+                                        <div class="bypass-step">
+                                            <div class="bypass-step-title"><i class="fa-solid fa-mobile-screen"></i> 2. Emulação Celular no Navegador (F12):</div>
+                                            <small class="bypass-note">Acesse <code>kwai.com</code>, aperte <code>F12</code> e clique no ícone de Celular/Tablet (<code>Ctrl + Shift + M</code>). Dê <code>F5</code>. A versão mobile libera login com <strong>Google e E-mail</strong>!</small>
+                                        </div>
+
+                                        <div class="bypass-step">
+                                            <div class="bypass-step-title"><i class="fa-solid fa-cookie-bite"></i> 3. Salvar no Lulatron:</div>
+                                            <small class="bypass-note">Após logar: <code>F12</code> > <code>Application</code> > <code>Cookies</code> > <code>kwai.com</code> > copie o cookie <code>kwai_session</code> ou <code>kuaishou.server.web_st</code> e cole no campo acima.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="conn-buttons-row">
+                                    <button type="submit" class="btn-primary" id="btnSaveConnKW">
+                                        <i class="fa-solid fa-floppy-disk"></i> Salvar Kwai
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO DE CAIXA DE ENTRADA & CÓDIGOS DE 6 DÍGITOS -->
+    <div class="inbox-modal-backdrop" id="inboxModal">
+        <div class="inbox-modal-card">
+            <div class="inbox-modal-header">
+                <h3><i class="fa-solid fa-envelope-open-text"></i> Caixa de Entrada</h3>
+                <button type="button" class="btn-icon-tiny" id="btnCloseInboxModal" style="font-size: 1.2rem; color: var(--text-secondary);" title="Fechar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="inbox-modal-body">
+                <div class="inbox-banner-info">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span>E-mail: <strong id="modalInboxEmail" style="color: var(--accent);">carregando...</strong></span>
+                        <span class="badge" id="modalInboxProviderBadge" style="font-size: 0.72rem; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">Provedor</span>
+                    </div>
+                    <button class="btn-secondary" id="btnRefreshModalInbox" style="padding: 4px 10px; font-size: 0.78rem;">
+                        <i class="fa-solid fa-arrows-rotate"></i> Atualizar Mensagens
+                    </button>
+                </div>
+
+                <!-- Destaque para Código de 6 Dígitos Detectado -->
+                <div id="otpHighlightContainer" style="display: none;"></div>
+
+                <!-- Lista de Mensagens Recebidas -->
+                <div id="modalInboxMessagesList" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="empty-state">Consultando mensagens recebidas...</div>
+                </div>
+            </div>
+            <div class="inbox-modal-footer">
+                <a href="#" target="_blank" id="modalExternalLink" class="btn-text-link">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> <span id="modalExternalLinkText">Abrir Caixa na Web</span>
+                </a>
+                <button type="button" class="btn-secondary" id="btnCloseInboxModalBottom">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas Invisível para Renderização e Download como Imagem PNG -->
+    <canvas id="exportCanvas" style="display: none;"></canvas>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Cache buster ?v=8 -->
+    <script src="/static/js/app.js?v=8"></script>
+</body>
+</html>

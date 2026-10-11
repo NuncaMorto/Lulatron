@@ -1,0 +1,76 @@
+# ==============================================================================
+# SEGURANÇA E PRIVACIDADE - NUNCA ENVIAR PARA O GITHUB
+# ==============================================================================
+
+# Arquivos de ambiente e segredos locais (senhas, chaves de API, tokens)
+.env
+.env.*
+!.env.example
+accounts_vault.json
+accounts_vault*.json
+
+# Sessões ativas de redes sociais (Cookies serializados do Instagram, TikTok, Kwai)
+sessions/*
+!sessions/.gitkeep
+
+# Diretório de uploads, mídias e vídeos locais (evita vazamento de mídias pessoais)
+uploads/*
+!uploads/.gitkeep
+!uploads/extracted/
+uploads/extracted/*
+!uploads/extracted/.gitkeep
+
+# Bancos de dados e históricos operacionais locais
+jobs.sqlite
+jobs.sqlite*
+*.sqlite
+*.sqlite3
+*.db
+posts_history.json
+extracted_history.json
+
+# ==============================================================================
+# PYTHON E AMBIENTES VIRTUAIS
+# ==============================================================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Distribuição / Empacotamento
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==============================================================================
+# SISTEMA OPERACIONAL E EDITORES DE CÓDIGO
+# ==============================================================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+logs/
